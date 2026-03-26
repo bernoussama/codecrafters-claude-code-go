@@ -33,6 +33,22 @@ func main() {
 	resp, err := client.Chat.Completions.New(context.Background(),
 		openai.ChatCompletionNewParams{
 			Model: "anthropic/claude-haiku-4.5",
+			Tools: []openai.ChatCompletionToolUnionParam{
+				openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+					Name:        "Read",
+					Description: openai.String("Read and return the contents of a file"),
+					Parameters: openai.FunctionParameters{
+						"type": "object",
+						"properties": map[string]any{
+							"file_path": map[string]any{
+								"type":        "string",
+								"description": "The path to the file to read",
+							},
+						},
+						"required": []string{"file_path"},
+					},
+				}),
+			},
 			Messages: []openai.ChatCompletionMessageParamUnion{
 				{
 					OfUser: &openai.ChatCompletionUserMessageParam{
