@@ -19,10 +19,10 @@ func main() {
 		panic("Prompt must not be empty")
 	}
 
-	apiKey := os.Getenv("OPENROUTER_API_KEY")
-	baseUrl := os.Getenv("OPENROUTER_BASE_URL")
+	apiKey := os.Getenv("ZAI_API_KEY")
+	baseUrl := os.Getenv("ZAI_BASE_URL")
 	if baseUrl == "" {
-		baseUrl = "https://openrouter.ai/api/v1"
+		baseUrl = "https://api.z.ai/api/coding/paas/v4"
 	}
 
 	if apiKey == "" {
@@ -32,7 +32,7 @@ func main() {
 	client := openai.NewClient(option.WithAPIKey(apiKey), option.WithBaseURL(baseUrl))
 	resp, err := client.Chat.Completions.New(context.Background(),
 		openai.ChatCompletionNewParams{
-			Model: "anthropic/claude-haiku-4.5",
+			Model: "zai/glm-4.7",
 			Messages: []openai.ChatCompletionMessageParamUnion{
 				{
 					OfUser: &openai.ChatCompletionUserMessageParam{
@@ -56,5 +56,5 @@ func main() {
 	fmt.Fprintln(os.Stderr, "Logs from your program will appear here!")
 
 	// TODO: Uncomment the line below to pass the first stage
-	// fmt.Print(resp.Choices[0].Message.Content)
+	fmt.Print(resp.Choices[0].Message.Content)
 }
