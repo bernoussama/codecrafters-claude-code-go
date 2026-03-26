@@ -26,7 +26,7 @@ func main() {
 	}
 
 	if apiKey == "" {
-		panic("Env variable ZAI_API_KEY not found")
+		fmt.Printf("Env variable ZAI_API_KEY not found")
 	}
 
 	client := openai.NewClient(option.WithAPIKey(apiKey), option.WithBaseURL(baseUrl))
