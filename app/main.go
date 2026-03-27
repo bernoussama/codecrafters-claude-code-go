@@ -24,20 +24,19 @@ func handleTools(msg openai.ChatCompletionMessage, tools map[string]toolDef) []o
 		name := toolCall.Function.Name
 		var args map[string]any
 		if err := json.Unmarshal([]byte(toolCall.Function.Arguments), &args); err != nil {
-			fmt.Fprintf(os.Stderr, "failed to parse args: %v\n", err)
+			// fmt.Fprintf(os.Stderr, "failed to parse args: %v\n", err)
 			messages = append(messages, openai.ToolMessage(fmt.Sprintf("error: %v", err), toolCall.ID))
 			continue
 		}
 
 		t, ok := tools[name]
 		if !ok {
-			fmt.Fprintf(os.Stderr, "unknown tool: %s\n", name)
+			// fmt.Fprintf(os.Stderr, "unknown tool: %s\n", name)
 			messages = append(messages, openai.ToolMessage(fmt.Sprintf("unknown tool: %s", name), toolCall.ID))
 			continue
 		}
 
 		result := t.handler(args)
-		fmt.Print(result)
 		messages = append(messages, openai.ToolMessage(result, toolCall.ID))
 	}
 
