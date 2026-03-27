@@ -40,7 +40,7 @@ func main() {
 					fmt.Fprintf(os.Stderr, "Read error: %v\n", err)
 					return
 				}
-				fmt.Printf("File: %s\n%s", path, string(data))
+				fmt.Printf("%s", string(data))
 			},
 		},
 	}
