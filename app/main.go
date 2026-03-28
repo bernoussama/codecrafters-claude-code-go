@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
@@ -98,6 +99,32 @@ func main() {
 					return fmt.Sprintf("Error writing file: %v", err)
 				}
 				return fmt.Sprintf("Successfully wrote to %s", path)
+			},
+		},
+		"Bash": {
+			def: openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+				Name:        "Bash",
+				Description: openai.String("Execute a shell command"),
+				Parameters: openai.FunctionParameters{
+					"type": "object",
+					"properties": map[string]any{
+						"command": map[string]any{
+							"type":        "string",
+							"description": "The command to execute",
+						},
+					},
+					"required": []string{"command"},
+				},
+			}),
+			handler: func(args map[string]any) string {
+				command, _ := args["command"].(string)
+				cmd := exec.Command("bash", "-c", command)
+				output, err := cmd.CombinedOutput()
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "Bash error: %v\n", err)
+					return fmt.Sprintf("Error: %v\n%s", err, string(output))
+				}
+				return string(output)
 			},
 		},
 	}
