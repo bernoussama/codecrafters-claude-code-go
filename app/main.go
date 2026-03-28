@@ -70,6 +70,36 @@ func main() {
 				return string(data)
 			},
 		},
+		"Write": {
+			def: openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+				Name:        "Write",
+				Description: openai.String("Write content to a file"),
+				Parameters: openai.FunctionParameters{
+					"type": "object",
+					"properties": map[string]any{
+						"file_path": map[string]any{
+							"type":        "string",
+							"description": "The path of the file to write to",
+						},
+						"content": map[string]any{
+							"type":        "string",
+							"description": "The content to write to the file",
+						},
+					},
+					"required": []string{"file_path", "content"},
+				},
+			}),
+			handler: func(args map[string]any) string {
+				path, _ := args["file_path"].(string)
+				content, _ := args["content"].(string)
+				err := os.WriteFile(path, []byte(content), 0644)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "Write error: %v\n", err)
+					return fmt.Sprintf("Error writing file: %v", err)
+				}
+				return fmt.Sprintf("Successfully wrote to %s", path)
+			},
+		},
 	}
 
 	toolList := make([]openai.ChatCompletionToolUnionParam, 0, len(tools))
